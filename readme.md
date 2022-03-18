@@ -7,6 +7,17 @@ nexus docker repository downloader
 ## 使用
 
 ```bash
+❯ go run main.go -h
+Usage of /tmp/go-build1781663169/b001/exe/main:
+  -host string
+    	1.1.1.1:8080
+  -latest
+    	only download latest (default true)
+  -registry string
+    	xx-registry
+  -thread int
+    	20 (default 20)
+
 ./nexus -host http://127.0.0.1:8080 -registry repo-name
 ```
 
