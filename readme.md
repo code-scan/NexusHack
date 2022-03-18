@@ -8,17 +8,25 @@ nexus docker repository downloader
 
 ```bash
 ❯ go run main.go -h
-Usage of /tmp/go-build1781663169/b001/exe/main:
+❯ go run main.go
+Usage of /tmp/go-build1337504908/b001/exe/main:
   -host string
     	1.1.1.1:8080
+  -keyword string
+    	only download match keyword  (default "xx/xx")
   -latest
-    	only download latest (default false)
+    	only download latest
   -registry string
     	xx-registry
   -thread int
     	20 (default 20)
+    	
+./nexus -host http://127.0.0.1:8080 -registry repo-name
 
 ./nexus -host http://127.0.0.1:8080 -registry repo-name  -latest
+
+./nexus -host http://127.0.0.1:8080 -registry repo-name  -latest -keyword nginx
+
 ```
 
 ## 运行逻辑

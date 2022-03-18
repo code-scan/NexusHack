@@ -15,15 +15,17 @@ import (
 
 type Docker struct {
 	pkg.Nexus
-	thread int
-	latest bool
-	blobs  map[string]int
-	images map[string][]string
+	thread  int
+	latest  bool
+	keyword string
+	blobs   map[string]int
+	images  map[string][]string
 }
 
-func NewDocker(host string, thread int, latest bool, registry ...string) *Docker {
+func NewDocker(host, keyword string, thread int, latest bool, registry ...string) *Docker {
 	var docker Docker
 	docker.Host = host
+	docker.keyword = keyword
 	docker.thread = thread
 	docker.latest = latest
 	docker.Registry = registry
@@ -58,6 +60,12 @@ func (d *Docker) getImages(registry, node string) {
 }
 func (d *Docker) GetTags(registry string, node string) {
 	log.Printf("[*] Get Tags: %s ", node)
+	if d.keyword != "" {
+		if strings.Contains(node, d.keyword) == false {
+			log.Printf("[*] not Match ,Skip")
+			return
+		}
+	}
 	ret, err := d.CoreUiBrowse(registry, node+"/tags")
 	if err != nil {
 		log.Println(err)
