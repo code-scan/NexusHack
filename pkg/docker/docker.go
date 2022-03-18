@@ -16,14 +16,16 @@ import (
 type Docker struct {
 	pkg.Nexus
 	thread int
+	latest bool
 	blobs  map[string]int
 	images map[string][]string
 }
 
-func NewDocker(host string, thread int, registry ...string) *Docker {
+func NewDocker(host string, thread int, latest bool, registry ...string) *Docker {
 	var docker Docker
 	docker.Host = host
 	docker.thread = thread
+	docker.latest = latest
 	docker.Registry = registry
 	docker.blobs = make(map[string]int)
 	docker.images = make(map[string][]string)
@@ -64,6 +66,9 @@ func (d *Docker) GetTags(registry string, node string) {
 	for _, tag := range ret.Result.Data {
 		log.Printf("	[#] Tags: %s ", tag.Id)
 		d.GetManifests(registry, node, tag.Text)
+		if d.latest {
+			break
+		}
 	}
 }
 
