@@ -11,7 +11,7 @@ func main() {
 	var thread int
 	var latest bool
 	var keyword string
-	flag.StringVar(&host, "host", "", "1.1.1.1:8080")
+	flag.StringVar(&host, "host", "", "http://1.1.1.1:8080")
 	flag.StringVar(&registry, "registry", "", "xx-registry")
 	flag.IntVar(&thread, "thread", 20, "20")
 	flag.BoolVar(&latest, "latest", false, "only download latest")

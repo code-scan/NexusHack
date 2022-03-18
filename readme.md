@@ -11,7 +11,7 @@ nexus docker repository downloader
 ❯ go run main.go
 Usage of /tmp/go-build1337504908/b001/exe/main:
   -host string
-    	1.1.1.1:8080
+    	http://1.1.1.1:8080
   -keyword string
     	only download match keyword  (default "xx/xx")
   -latest
