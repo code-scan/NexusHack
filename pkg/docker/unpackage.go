@@ -3,7 +3,6 @@ package docker
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -22,26 +21,28 @@ func ExtractTarGz(gzipStream io.Reader, dir string) {
 		}
 		if err != nil {
 			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
+			break
 		}
+		//log.Println(header.Typeflag)
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.Mkdir(dir+"/"+header.Name, 0755); err != nil {
-				log.Fatalf("ExtractTarGz: Mkdir() failed: %s", err.Error())
+				//log.Printf("ExtractTarGz: Mkdir() failed: %s", err.Error())
 			}
 		case tar.TypeReg:
 			outFile, err := os.Create(dir + "/" + header.Name)
 			if err != nil {
-				log.Fatalf("ExtractTarGz: Create() failed: %s", err.Error())
+				//log.Printf("ExtractTarGz: Create() failed: %s", err.Error())
 			}
 			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Fatalf("ExtractTarGz: Copy() failed: %s", err.Error())
+				//log.Printf("ExtractTarGz: Copy() failed: %s", err.Error())
 			}
 			outFile.Close()
 		default:
-			log.Fatalf(
-				"ExtractTarGz: uknown type: %s in %s",
-				header.Typeflag,
-				header.Name)
+			//log.Printf(
+			//	"ExtractTarGz: uknown type: %s in %s",
+			//	header.Typeflag,
+			//	header.Name)
 		}
 
 	}

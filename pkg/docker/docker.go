@@ -15,13 +15,15 @@ import (
 
 type Docker struct {
 	pkg.Nexus
+	thread int
 	blobs  map[string]int
 	images map[string][]string
 }
 
-func NewDocker(host string, registry ...string) *Docker {
+func NewDocker(host string, thread int, registry ...string) *Docker {
 	var docker Docker
 	docker.Host = host
+	docker.thread = thread
 	docker.Registry = registry
 	docker.blobs = make(map[string]int)
 	docker.images = make(map[string][]string)
@@ -95,7 +97,7 @@ func (d *Docker) GetAllBlobs(registry string) {
 	hostname, _ := url.Parse(d.Host)
 	os.MkdirAll(fmt.Sprintf("out/%s/%s/blobs/", hostname.Host, registry), 0777)
 	tasks := make(chan string, 100)
-	for i := 0; i < 20; i++ {
+	for i := 0; i < d.thread; i++ {
 		wg.Add(1)
 		go func() {
 			for {
@@ -130,7 +132,7 @@ func (d *Docker) GetBlobs(registry string) {
 	hostname, _ := url.Parse(d.Host)
 	os.MkdirAll(fmt.Sprintf("out/%s/%s/blobs/", hostname.Host, registry), 0777)
 	tasks := make(chan string, 100)
-	for i := 0; i < 20; i++ {
+	for i := 0; i < d.thread; i++ {
 		wg.Add(1)
 		go func() {
 			defer func() {
@@ -166,7 +168,17 @@ func (d *Docker) GetBlobs(registry string) {
 func (d *Docker) ExtractFsLayer(registry string) {
 	hostname, _ := url.Parse(d.Host)
 	for image, fs := range d.images {
-		os.MkdirAll(fmt.Sprintf("out/%s/%s/%s/", hostname.Host, registry, image), 0777)
-		log.Println(image, fs)
+		dir := fmt.Sprintf("out/%s/%s/%s/", hostname.Host, registry, image)
+		os.MkdirAll(dir, 0777)
+		for _, f := range fs {
+			f = strings.ReplaceAll(f, "sha256:", "")
+			blob := fmt.Sprintf("out/%s/%s/blobs/%s", hostname.Host, registry, f)
+			r, err := os.Open(blob)
+			if err != nil {
+				fmt.Println("error")
+			}
+			log.Println("[*] ExtractTarGz : ", blob)
+			ExtractTarGz(r, dir)
+		}
 	}
 }
