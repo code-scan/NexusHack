@@ -114,6 +114,10 @@ func (d *Docker) GetAllBlobs(registry string) {
 					if len(f) == 2 {
 						filename = fmt.Sprintf("out/%s/%s/blobs/%s", hostname.Host, registry, f[1])
 						log.Println("[*] Start Download: ", filename)
+						if d.CheckFileExist(filename) {
+							log.Println("[*] File Exist: ", filename)
+							continue
+						}
 						d.Download(uri, filename)
 						log.Println("[*] Over Download: ", filename)
 					}
@@ -152,6 +156,10 @@ func (d *Docker) GetBlobs(registry string) {
 					if len(f) == 2 {
 						filename = fmt.Sprintf("out/%s/%s/blobs/%s", hostname.Host, registry, f[1])
 						log.Println("[*] Start Download: ", filename)
+						if d.CheckFileExist(filename) {
+							log.Println("[*] File Exist: ", filename)
+							continue
+						}
 						d.Download(uri, filename)
 						log.Println("[*] Over Download: ", filename)
 					}
@@ -186,4 +194,15 @@ func (d *Docker) ExtractFsLayer(registry string) {
 			ExtractTarGz(r, dir)
 		}
 	}
+}
+func (d *Docker) CheckFileExist(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		return false
+	} else {
+		return true
+	}
+	return true
 }
